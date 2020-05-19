@@ -19,4 +19,3 @@ def import_items(feed):
             )
         except IntegrityError:
             pass
-
