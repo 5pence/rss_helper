@@ -21,13 +21,13 @@ def import_feed_task(feed_id: int):
         # were last checked in the past.
         feed.fail_count += 1
         feed.last_checked_at = timezone.now() + timedelta(minutes=(2 ** feed.fail_count))
-
     feed.save()
+
 
 @shared_task
 def import_feeds():
     # search for feeds that are in need of updating
-    # ignore any feeds that have surpased a certain configurable threshold
+    # ignore any feeds that have surpassed a certain configurable threshold
     # see settings to update FAIL_COUNT_THRESHOLD to a suitable value
     fail_count_threshold = settings.FAIL_COUNT_THRESHOLD
     feeds = Feed.objects.filter(last_checked_at__lte=timezone.now(), fail_count__lte=fail_count_threshold)

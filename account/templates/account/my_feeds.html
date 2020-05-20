@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}My Feeds{% endblock %}
+
+{% block content %}
+    <div class="post border-bottom mb-3">
+        <h2>My RSS Feeds</h2>
+
+        <div class="accordion" id="accordionExample">
+            {% for feed in feeds %}
+                <div class="card">
+                    <div class="card-header" id="{{ feed.id }}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                                    data-target="#collapse{{ feed.id }}" aria-expanded="true"
+                                    aria-controls="collapseOne">
+                                {{ feed }}<span class="float-right">Unread items: <mark>{{ feed.unread }}</mark></span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse{{ feed.id }}" class="collapse" aria-labelledby="{{ feed }}"
+                         data-parent="#accordionExample">
+                        <div class="card-body">
+                            {% for feed_item in feed_items %}
+                                {% if feed_item.feed.id == feed.id %}
+                                    {% if feed_item.is_read %}
+                                        <p>
+                                            <a href="{% url 'feed_item' %}?id={{ feed_item.id }}">{{ feed_item.title }}</a></p>
+                                    {% else %}
+                                        <p><mark><a href="{% url 'feed_item' %}?id={{ feed_item.id }}">{{ feed_item.title }}</a></p></mark></p>
+                                        <hr>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

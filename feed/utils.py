@@ -27,6 +27,7 @@ def import_items(feed):
                 url=entry.link
             )
         except IntegrityError:
-            # this exception is raised when we hit Duplicates.  we ignore duplicates
-            # its cheaper to try to insert than to lookup and check if it exists then insert if it does not
+            # This exception is raised when we hit duplicates.  Duplicates are ignored as
+            # it's cheaper to try to insert them, rather than to lookup and check if it exists
+            # then insert if it does not.
             pass

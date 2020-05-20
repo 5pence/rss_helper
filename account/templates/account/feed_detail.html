@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ feed_item.title }}{% endblock %}
+
+{% block content %}
+    <div class="post border-bottom mb-3">
+        <h2>{{ feed_item.title }}</h2>
+        <p>Created at: {{ feed_item.created_at }}</p>
+        <p>{{ feed_item.text }}</p>
+        <p>Read more at: <a href="{{ feed_item.url }}" target="_blank">{{ feed_item.url }}</a></p>
+    </div>
+{% endblock %}
