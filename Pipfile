@@ -9,6 +9,10 @@ verify_ssl = true
 django = "*"
 requests = "*"
 feedparser = "*"
+python-decouple = "*"
+celery = "*"
+django-celery-beat = "*"
+django-celery-results = "*"
 
 [requires]
 python_version = "3.8"

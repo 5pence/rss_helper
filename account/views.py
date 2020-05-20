@@ -20,3 +20,25 @@ def register(request):
     else:
         user_form = UserRegistrationForm()
     return render(request, 'account/register.html', {'user_form': user_form})
+
+
+def welcome(request):
+    return render(request, 'account/welcome.html')
+
+
+# def my_feeds(request):
+#     feeds =
+
+
+
+# TODO: wire up front end and build templates
+# TODO: add view to view feeds subbed to including unread feed item count
+# TODO: add view for feed item detail with favourite / unfavourite functionality and comment/note section
+# TODO: maybe add a bookmarks view that returns a list of previously bookmarked feed items
+# TODO: add follow and unfollow functionality for user
+# TODO: add favourites and unfavourite functionality for user
+# TODO: add comments / note functionality
+# TODO: add cerery or Asyncio to update feed asynchronously include an expotential fall back mechanism  - maybe in own container?
+# TODO: Docker containerize app
+# TODO: write tests cover main functions including testing for backoff
+# Todo: copy my notes Readme

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from feed.utils import import_items
+from feed.tasks import import_feed_task
 from account.models import Feed
 
 
@@ -13,4 +13,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         feed = Feed.objects.get(pk=options['id'])
         print(feed.url)
-        print(import_items(feed))
+        print(import_feed_task.delay(feed.id))
+        print('done')
