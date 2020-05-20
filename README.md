@@ -1,5 +1,6 @@
  
- commands for celery runnings:
+ ### commands for celery:
  
- celery -A rss_helper  beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
- celery -A rss_helper worker -l info
+ 1. celery -A rss_helper  beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+ 
+ 2. celery -A rss_helper worker -l info
