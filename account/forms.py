@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import Comment
 
 
 class LoginForm(forms.Form):
@@ -26,3 +27,8 @@ class UserRegistrationForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     """ Form for entering comment """
     text = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = Comment
+        fields = ('text',)
+

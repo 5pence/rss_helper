@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.urls import reverse
 
 class TitleMixin(object):
     def __str__(self):
@@ -35,6 +35,9 @@ class FeedItem(TitleMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     url = models.URLField(blank=True, null=True)
+
+    def get_absolute_url(self):
+        return reverse('feed_item', kwargs={'pk': self.pk})
 
     class Meta:
         """ Ensures duplicate feed items are not saved"""

@@ -47,6 +47,13 @@
 <div class="container-fluid">
     <div class="row m-3">
         <div class="col-md-12">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             {% block content %}
             {% endblock %}
         </div>

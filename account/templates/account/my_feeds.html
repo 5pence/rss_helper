@@ -25,9 +25,9 @@
                                 {% if feed_item.feed.id == feed.id %}
                                     {% if feed_item.is_read %}
                                         <p>
-                                            <a href="{% url 'feed_item' %}?id={{ feed_item.id }}">{{ feed_item.title }}</a></p>
+                                            <a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a></p>
                                     {% else %}
-                                        <p><mark><a href="{% url 'feed_item' %}?id={{ feed_item.id }}">{{ feed_item.title }}</a></p></mark></p>
+                                        <p><mark><a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a></p></mark></p>
                                         <hr>
                                     {% endif %}
                                 {% endif %}
