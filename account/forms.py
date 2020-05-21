@@ -21,3 +21,8 @@ class UserRegistrationForm(forms.ModelForm):
         if cd['password'] != cd['password2']:
             raise forms.ValidationError("Passwords don't match.")
         return cd['password2']
+
+
+class CommentForm(forms.ModelForm):
+    """ Form for entering comment """
+    text = forms.CharField(widget=forms.Textarea)

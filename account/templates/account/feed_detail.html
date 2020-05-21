@@ -4,9 +4,38 @@
 
 {% block content %}
     <div class="post border-bottom mb-3">
+        <p>
+            {% if feed_item.is_bookmarked %}
+                <a class="btn btn-warning float-right"
+                   href="{% url 'toggle_bookmark' %}?id={{ feed_item.id }}">Remove this Bookmark</a>
+            {% else %}
+                <a class="btn btn-success float-right"
+                   href="{% url 'toggle_bookmark' %}?id={{ feed_item.id }}">Bookmark this feed item</a>
+            {% endif %}
+        </p>
         <h2>{{ feed_item.title }}</h2>
         <p>Created at: {{ feed_item.created_at }}</p>
         <p>{{ feed_item.text }}</p>
         <p>Read more at: <a href="{{ feed_item.url }}" target="_blank">{{ feed_item.url }}</a></p>
+    </div>
+    <div>
+        {% for comment in comments %}
+            <div class="card">
+                <div class="card-header">
+                    Comment left on: {{ comment.created_at }}
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ comment.text }}</p>
+                    <a href="#" class="btn btn-danger float-right">Delete Comment</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div>
+        <div class="form-group">
+            <label for="commentTextarea">Leave comment below:</label>
+            <textarea class="form-control" id="commentTextarea" rows="3"></textarea>
+        </div>
+        <a href="#" class="btn btn-success float-right">Submit Comment</a>
     </div>
 {% endblock %}

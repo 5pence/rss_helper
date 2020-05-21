@@ -42,6 +42,7 @@ class FeedItem(TitleMixin, models.Model):
 
 
 class Comment(models.Model):
+    """ Model that handles comments for each feed item"""
     feed_item = models.ForeignKey(FeedItem, on_delete=models.CASCADE)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

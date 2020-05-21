@@ -6,6 +6,7 @@ from celery import shared_task
 from account.models import Feed
 from feed.utils import import_items, ImportFailed
 
+
 @shared_task
 def import_feed_task(feed_id: int):
     print('fetching id', feed_id)
