@@ -14,10 +14,29 @@
                             <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
                                     data-target="#collapse{{ feed.id }}" aria-expanded="true"
                                     aria-controls="collapseOne">
-                                {{ feed }}<span class="float-right">Unread items: <mark>{{ feed.unread }}</mark></span>
+                                {{ feed }}
+                                <span class="float-right">
+                                    {% if feed.unread == 0 %}
+                                        No unread items
+                                    {% else %}
+                                        Unread items:
+                                        <mark>{{ feed.unread }}</mark>
+                                    {% endif %}
+                                </span>
                             </button>
                         </h2>
+                        <div>
+                            {% if feed.fail_count >= 10 %}
+                                <a class="btn btn-danger float-right"
+                                   href="{% url 'reset_fail_count' %}?id={{ feed.id }}">
+                                    Restart Feed</a>
+                                <span class="float-right pr-2 mt-2">
+                                    Sorry, this feed has failed many times
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
+
                     <div id="collapse{{ feed.id }}" class="collapse" aria-labelledby="{{ feed }}"
                          data-parent="#accordionExample">
                         <div class="card-body">
@@ -27,7 +46,9 @@
                                         <p>
                                             <a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a></p>
                                     {% else %}
-                                        <p><mark><a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a></p></mark></p>
+                                        <p>
+                                            <mark><a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a>
+                                        </p></mark></p>
                                         <hr>
                                     {% endif %}
                                 {% endif %}

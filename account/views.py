@@ -81,6 +81,11 @@ def delete_comment(request, pk):
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
 
+@login_required
+def reset_fail_count(request, pk):
+    messages.add_message(request, messages.WARNING, 'Restarted feed')
+    print('restarted feed!')
+
 # TODO: Add somewhere to subscribe(follow) to available feeds
 # TODO: Maybe add a bookmarks view that returns a list of previously bookmarked feed items
 # TODO: Put celery task in own container
