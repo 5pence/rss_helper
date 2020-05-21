@@ -23,6 +23,11 @@ class Feed(TitleMixin, models.Model):
         """ Helper function to return sum of unread feed items"""
         return self.feeditem_set.filter(is_read=False).count()
 
+    @property
+    def bookmarked(self):
+        """ Helper function to return sum of bookmarked feed items"""
+        return self.feeditem_set.filter(is_bookmarked=True).count()
+
 
 class FeedItem(TitleMixin, models.Model):
     """ Model that relates to a feed item of a feed """

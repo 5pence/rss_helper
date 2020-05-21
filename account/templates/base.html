@@ -35,7 +35,13 @@
             {% endif %}
             {% if  user.is_authenticated %}
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'available_feeds' %}">Available Feeds</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'my_feeds' %}">My Feeds</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'my_favourite_feeds' %}">My Favourite Feeds</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>

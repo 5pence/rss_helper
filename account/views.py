@@ -27,12 +27,28 @@ def welcome(request):
 
 
 @login_required
+def available_feeds(request):
+    """ View that shows available feeds """
+    return render(request, 'account/available_feeds.html')
+
+
+@login_required
 def my_feeds(request):
-    """View that shows logged in user their feeds ordered by latest created_at """
+    """ View that shows logged in user their feeds ordered by latest created_at """
     feeds = Feed.objects.filter(user=request.user)
     feed_items = FeedItem.objects.filter(feed__user=request.user).order_by('-created_at')
     return render(request, 'account/my_feeds.html', {'feeds': feeds,
                                                      'feed_items': feed_items})
+
+
+@login_required
+def my_favourite_feeds(request):
+    """ View that shows logged in user their favourite feeds ordered by latest created_at """
+    feeds = Feed.objects.filter(user=request.user)
+    feed_items = FeedItem.objects.filter(feed__user=request.user).order_by('-created_at')
+    feed_items = feed_items.filter(is_bookmarked=True)
+    return render(request, 'account/my_favourite_feed_items.html', {'feeds': feeds,
+                                                                    'feed_items': feed_items})
 
 
 @login_required
