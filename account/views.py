@@ -123,7 +123,9 @@ def reset_fail_count(request, pk):
     print('restarted feed!')
 
 
-# TODO: Add somewhere to subscribe(follow) to available feeds
+# TODO: Prettify ugly input form
+# TODO: Unfollow feed button
+# TODO: Input security
 # TODO: Put celery task in own container
 # TODO: Docker containerize app
 # TODO: Write tests cover main functions including testing for backoff
