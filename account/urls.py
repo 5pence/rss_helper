@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 
@@ -10,6 +10,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='registration/logged_out.html'), name='logout'),
     path('add_feed', views.add_feed, name='add_feed'),
     path('my_feeds/', views.my_feeds, name='my_feeds'),
+    path('remove_feed/<int:pk>', views.remove_feed, name='remove_feed'),
     path('my_favourite_feeds/', views.my_favourite_feeds, name='my_favourite_feeds'),
     path('feed_item/<int:pk>/', views.feed_item_detail, name='feed_item'),
     path('feed_item/<int:pk>/add-comment', views.add_comment, name='add_comment'),

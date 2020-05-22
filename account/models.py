@@ -19,6 +19,10 @@ class Feed(TitleMixin, models.Model):
     last_checked_at = models.DateTimeField(null=True)
     fail_count = models.IntegerField(default=0)
 
+    class Meta:
+        """ Ensures duplicate user url feeds are not saved"""
+        unique_together = ['user', 'url']
+
     @property
     def unread(self):
         """ Helper function to return sum of unread feed items"""

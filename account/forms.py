@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Comment, Feed
-
+from feed.utils import fetch_rss
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -32,6 +32,14 @@ class AddFeedForm(forms.ModelForm):
                                         attrs={"style": "resize: none"}),
                                   required=True)
     url = forms.URLField(label='URL', required=True)
+
+    def clean_url(self):
+        url = self.cleaned_data['url']
+        ret = fetch_rss(url)
+        if 'bozo' in ret and ret['bozo'] == 1:
+            raise forms.ValidationError('Invalid RSS Feed')
+        return url
+
 
     class Meta:
         model = Feed

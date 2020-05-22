@@ -5,17 +5,22 @@
 {% block content %}
     <div class="post border-bottom mb-3">
         <h2>My RSS Feeds</h2>
-
         <div class="accordion" id="accordionExample">
             {% for feed in feeds %}
                 <div class="card">
                     <div class="card-header" id="{{ feed.id }}">
-                        <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                        <div class="mb-0">
+                            <button class="btn btn-link btn-block text-left"
+                                    type="button" data-toggle="collapse"
                                     data-target="#collapse{{ feed.id }}" aria-expanded="true"
                                     aria-controls="collapseOne">
                                 {{ feed }}
-                                <span class="float-right">
+                                <a onClick="return confirm(
+                                    'are you sure you want to delete this feed?');"
+                                   class="btn btn-danger float-right ml-5"
+                                   href="{% url 'remove_feed' pk=feed.id %}">
+                                    Remove Feed</a>
+                                <span class="float-right mr-5">
                                     {% if feed.unread == 0 %}
                                         No unread items
                                     {% else %}
@@ -23,16 +28,15 @@
                                         <mark>{{ feed.unread }}</mark>
                                     {% endif %}
                                 </span>
-                            </button>
-                        </h2>
+                        </div>
                         <div>
                             {% if feed.fail_count >= 10 %}
-                                <a class="btn btn-danger float-right"
-                                   href="{% url 'reset_fail_count' pk=feed.id %}">
-                                    Restart Feed</a>
-                                <span class="float-right pr-2 mt-2">
+                                <span class="float-left mt-2">
                                     Sorry, this feed has failed many times
                                 </span>
+                                <a class="btn btn-info float-left ml-3"
+                                   href="{% url 'reset_fail_count' pk=feed.id %}">
+                                    Restart Feed</a>
                             {% endif %}
                         </div>
                     </div>
@@ -40,11 +44,12 @@
                     <div id="collapse{{ feed.id }}" class="collapse" aria-labelledby="{{ feed }}"
                          data-parent="#accordionExample">
                         <div class="card-body">
-                            {% for feed_item in feed_items %}
-                                {% if feed_item.feed.id == feed.id %}
+                            {% for feed_item in feed.feeditem_set.all %}
+
                                     {% if feed_item.is_read %}
                                         <p>
-                                            <a href="{{ feed_item.get_absolute_url }}">{{ feed_item.title }}</a></p>
+                                            <a href="{{ feed_item.get_absolute_url }}">
+                                                {{ feed_item.title }}</a></p>
                                     {% else %}
                                         <p>
                                             <mark><a href="{{ feed_item.get_absolute_url }}">
@@ -52,7 +57,7 @@
                                         </p>
                                     {% endif %}
                                     <hr>
-                                {% endif %}
+
                             {% endfor %}
                         </div>
                     </div>

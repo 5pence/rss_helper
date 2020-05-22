@@ -31,8 +31,8 @@ def welcome(request):
 @login_required
 def add_feed(request):
     """ View that allows logged in user to add their own feed  """
+    form = AddFeedForm(request.POST or None)
     if request.method == 'POST':
-        form = AddFeedForm(request.POST)
         if form.is_valid():
             user = request.user
             feed = form.save(commit=False)
@@ -42,7 +42,7 @@ def add_feed(request):
             messages.add_message(request, messages.SUCCESS,
                                  'Your feed was added, it may take up to a minute '
                                  'for you to see some feed items')
-    form = AddFeedForm()
+
     return render(request, 'account/add_feed.html', {'form': form})
 
 
@@ -56,9 +56,26 @@ def available_feeds(request):
 def my_feeds(request):
     """ View that shows logged in user their feeds ordered by latest created_at """
     feeds = Feed.objects.filter(user=request.user)
-    feed_items = FeedItem.objects.filter(feed__user=request.user).order_by('-created_at')
-    return render(request, 'account/my_feeds.html', {'feeds': feeds,
-                                                     'feed_items': feed_items})
+    return render(request, 'account/my_feeds.html', {'feeds': feeds})
+
+
+@login_required
+def remove_feed(request, pk):
+    """ Logic to remove feed from logged in user's list """
+    feed = Feed.objects.get(id=pk, user=request.user)
+    feed.delete()
+    messages.add_message(request, messages.WARNING, 'Your feed was deleted')
+    return HttpResponseRedirect(reverse('my_feeds'))
+
+
+@login_required
+def reset_fail_count(request, pk):
+    messages.add_message(request, messages.INFO, 'Restarted feed')
+    feed = Feed.objects.get(id=pk, user=request.user)
+    feed.fail_count = 0
+    feed.last_checked_at = timezone.now()
+    feed.save()
+    return HttpResponseRedirect(reverse('my_feeds'))
 
 
 @login_required
@@ -116,15 +133,8 @@ def delete_comment(request, pk):
     messages.add_message(request, messages.WARNING, 'Your comment was deleted')
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
-
-@login_required
-def reset_fail_count(request, pk):
-    messages.add_message(request, messages.INFO, 'Restarted feed')
-    print('restarted feed!')
-
-
-# TODO: Prettify ugly input form
-# TODO: Unfollow feed button
+# TODO: Edit feed button
+# TODO: Ensure user doesn't use same name or feed url to avoid duplicates when adding feed
 # TODO: Input security
 # TODO: Put celery task in own container
 # TODO: Docker containerize app
