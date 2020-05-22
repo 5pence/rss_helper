@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Comment
+from .models import Comment, Feed
 
 
 class LoginForm(forms.Form):
@@ -24,8 +24,22 @@ class UserRegistrationForm(forms.ModelForm):
         return cd['password2']
 
 
+class AddFeedForm(forms.ModelForm):
+    """ Form for logged in user to add feeds """
+    title = forms.CharField(label='Title', required=True)
+    description = forms.CharField(label='Description',
+                                  widget=forms.Textarea(
+                                        attrs={"style": "resize: none"}),
+                                  required=True)
+    url = forms.URLField(label='URL', required=True)
+
+    class Meta:
+        model = Feed
+        fields = ('title', 'description', 'url')
+
+
 class CommentForm(forms.ModelForm):
-    """ Form for entering comment """
+    """ Form for logged in user to enter comment """
     text = forms.CharField(widget=forms.Textarea)
 
     class Meta:

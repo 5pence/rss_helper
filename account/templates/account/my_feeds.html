@@ -28,7 +28,7 @@
                         <div>
                             {% if feed.fail_count >= 10 %}
                                 <a class="btn btn-danger float-right"
-                                   href="{% url 'reset_fail_count' %}?id={{ feed.id }}">
+                                   href="{% url 'reset_fail_count' pk=feed.id %}">
                                     Restart Feed</a>
                                 <span class="float-right pr-2 mt-2">
                                     Sorry, this feed has failed many times

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}My Favourite Feeds{% endblock %}
+
+{% block content %}
+    <div class="post border-bottom mb-3">
+        <h2>Add RSS Feed</h2>
+        <form method="post" action="{% url 'add_feed' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success float-right">Submit and Follow Feed</button>
+        </form>
+    </div>
+{% endblock %}

@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, CommentForm
+from django.utils import timezone
+
+from .forms import UserRegistrationForm, CommentForm, AddFeedForm
 from .models import Feed, FeedItem, Comment
 from django.urls import reverse
 
@@ -22,14 +24,32 @@ def register(request):
 
 
 def welcome(request):
-    """Main home screen"""
+    """ Main home screen """
     return render(request, 'account/welcome.html')
+
+
+@login_required
+def add_feed(request):
+    """ View that allows logged in user to add their own feed  """
+    if request.method == 'POST':
+        form = AddFeedForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            feed = form.save(commit=False)
+            feed.user = user
+            feed.last_checked_at = timezone.now()
+            feed.save()
+            messages.add_message(request, messages.SUCCESS,
+                                 'Your feed was added, it may take up to a minute '
+                                 'for you to see some feed items')
+    form = AddFeedForm()
+    return render(request, 'account/add_feed.html', {'form': form})
 
 
 @login_required
 def available_feeds(request):
     """ View that shows available feeds """
-    return render(request, 'account/available_feeds.html')
+    return render(request, 'account/add_feed.html')
 
 
 @login_required
@@ -99,11 +119,11 @@ def delete_comment(request, pk):
 
 @login_required
 def reset_fail_count(request, pk):
-    messages.add_message(request, messages.WARNING, 'Restarted feed')
+    messages.add_message(request, messages.INFO, 'Restarted feed')
     print('restarted feed!')
 
+
 # TODO: Add somewhere to subscribe(follow) to available feeds
-# TODO: Maybe add a bookmarks view that returns a list of previously bookmarked feed items
 # TODO: Put celery task in own container
 # TODO: Docker containerize app
 # TODO: Write tests cover main functions including testing for backoff
