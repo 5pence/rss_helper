@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import Comment, Feed
 from feed.utils import fetch_rss
 
+
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
@@ -27,23 +28,31 @@ class UserRegistrationForm(forms.ModelForm):
 class AddFeedForm(forms.ModelForm):
     """ Form for logged in user to add feeds """
     title = forms.CharField(label='Title', required=True)
-    description = forms.CharField(label='Description',
-                                  widget=forms.Textarea(
-                                        attrs={"style": "resize: none"}),
-                                  required=True)
     url = forms.URLField(label='URL', required=True)
-
-    def clean_url(self):
-        url = self.cleaned_data['url']
-        ret = fetch_rss(url)
-        if 'bozo' in ret and ret['bozo'] == 1:
-            raise forms.ValidationError('Invalid RSS Feed')
-        return url
-
 
     class Meta:
         model = Feed
-        fields = ('title', 'description', 'url')
+        fields = ('title', 'url')
+
+    def clean_url(self):
+        url = self.cleaned_data['url']
+        result = fetch_rss(url)
+        if 'bozo' in result and result['bozo'] == 1:
+            raise forms.ValidationError('Invalid RSS Feed')
+        return url
+
+    def clean(self):
+        cleaned_data = super(AddFeedForm, self).clean()
+        title = cleaned_data.get('title')
+        url = cleaned_data.get('url')
+        if Feed.objects.filter(title=title).count():
+            raise forms.ValidationError(
+                "You are already that title in your feed, please choose another."
+            )
+        if Feed.objects.filter(url=url).count():
+            raise forms.ValidationError(
+                "You are already following that feed url, you don't need to follow it twice."
+            )
 
 
 class CommentForm(forms.ModelForm):

@@ -12,7 +12,6 @@ class Feed(TitleMixin, models.Model):
     """ Model for the RSS Feed """
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
-    description = models.TextField()
     url = models.URLField(default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

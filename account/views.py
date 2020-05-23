@@ -134,7 +134,6 @@ def delete_comment(request, pk):
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
 # TODO: Edit feed button
-# TODO: Ensure user doesn't use same name or feed url to avoid duplicates when adding feed
 # TODO: Input security
 # TODO: Put celery task in own container
 # TODO: Docker containerize app
