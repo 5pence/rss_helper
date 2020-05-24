@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
 from celery import shared_task
-from account.models import Feed
+from rssfeed.models import Feed
 from feed.utils import import_items, ImportFailed
 
 

@@ -1,5 +1,5 @@
 import feedparser
-from account.models import FeedItem
+from rssfeed.models import FeedItem
 from django.db.utils import IntegrityError
 
 

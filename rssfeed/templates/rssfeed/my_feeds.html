@@ -20,6 +20,9 @@
                                    class="btn btn-danger float-right ml-5"
                                    href="{% url 'remove_feed' pk=feed.id %}">
                                     Remove Feed</a>
+                                <a class="btn btn-info float-right ml-5"
+                                   href="{% url 'update_feed' pk=feed.id %}">
+                                    Update Feed</a>
                                 <span class="float-right mr-5">
                                     {% if feed.unread == 0 %}
                                         No unread items
