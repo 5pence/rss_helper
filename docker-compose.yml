@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+  db:
+    image: mdillon/postgis
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  web:
+    build: .
+    command: bash -c "pipenv run python /code/manage.py && pipenv run /code/manage.py loaddata init.json && pipenv run python /code/manage.py runserver 0.0.0.0:8000"
+    working_dir: /code
+    ports:
+      - 8000:8000
+    container_name: rss_reader_web
+    depends_on:
+      - db
+
+  celery:
+    build: .
+    command: pipenv run celery -A rss_helper worker -l info
+    working_dir: /code
+    depends_on:
+      - db
+      - redis
+
+  celery_beat:
+    build: .
+    command: pipenv run celery -A rss_helper beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    working_dir: /code
+    depends_on:
+      - db
+      - redis
+
+  redis:
+    image: redis:latest
+    container_name: rd01
+    ports:
+      - '6379:6379'
+
+volumes:
+  postgres_data:

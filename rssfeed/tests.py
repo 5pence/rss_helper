@@ -102,6 +102,17 @@ class FeedTest(TestCase):
         # Check no feed was added
         self.assertEqual(before_count, self.user.feed_set.all().count())
 
+    def test_update_feed(self):
+        """ Test to update feed details """
+        url = reverse('update_feed/1')
+        before_count = self.user.feed_set.all().count()
+        response = self.client.post(
+            url,
+            data={
+                'title': 'another random feed',
+                'url': 'http://www.nu.nl/rss/Algemeen'
+            })
+
     def test_feed_import_fail_backoff(self):
         """ Test exponential backoff algorithm by using a bad feed url
         and ensures a restart button is present after 10 failed tests on the My Feeds page

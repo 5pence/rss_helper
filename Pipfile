@@ -13,6 +13,8 @@ python-decouple = "*"
 celery = "*"
 django-celery-beat = "*"
 django-celery-results = "*"
+redis = "*"
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.8"

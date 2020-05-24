@@ -68,11 +68,21 @@ WSGI_APPLICATION = 'rss_helper.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_ENV_DB', default='postgres'),
+        'USER': config('DB_ENV_POSTGRES_USER', default='postgres'),
+        'PASSWORD': config('DB_ENV_POSTGRES_PASSWORD', default='postgres'),
+        'HOST': config('DB_PORT_5432_TCP_ADDR', default='db'),
+        'PORT': config('DB_PORT_5432_TCP_PORT', ''),
+    },
 }
 
 
@@ -122,6 +132,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 LOGIN_REDIRECT_URL = '/my_feeds/'
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',

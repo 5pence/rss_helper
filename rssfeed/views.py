@@ -17,7 +17,7 @@ def welcome(request):
 @login_required
 def add_feed(request):
     """ Allows logged in user to add their own feed  """
-    form = AddFeedForm(request.POST or None)
+    form = AddFeedForm(request.POST or None, user=request.user)
     if request.method == 'POST':
         if form.is_valid():
             user = request.user
@@ -36,7 +36,7 @@ def add_feed(request):
 def update_feed(request, pk):
     """ Allows logged in user to edit their own feed """
     feed = Feed.objects.get(id=pk, user=request.user)
-    form = AddFeedForm(request.POST or None, instance=feed)
+    form = AddFeedForm(request.POST or None, instance=feed, user=request.user)
     if request.POST:
         if form.is_valid():
             feed.save()
