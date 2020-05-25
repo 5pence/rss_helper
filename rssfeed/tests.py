@@ -104,14 +104,27 @@ class FeedTest(TestCase):
 
     def test_update_feed(self):
         """ Test to update feed details """
-        url = reverse('update_feed/1')
+        feed = Feed.objects.create(
+            user=self.user,
+            title='random feed',
+            url='http://www.nu.nl/rss/Algemeen'
+        )
+        url = reverse('update_feed', kwargs={'pk': feed.id})
         before_count = self.user.feed_set.all().count()
         response = self.client.post(
             url,
             data={
                 'title': 'another random feed',
                 'url': 'http://www.nu.nl/rss/Algemeen'
-            })
+            },
+            follow=True
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "successfully updated your feed")
+        self.assertContains(response, "another random feed")
+        after_count = self.user.feed_set.all().count()
+        # ensure no duplicates were made
+        self.assertEqual(before_count, after_count)
 
     def test_feed_import_fail_backoff(self):
         """ Test exponential backoff algorithm by using a bad feed url

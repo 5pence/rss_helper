@@ -135,9 +135,5 @@ def delete_comment(request, pk):
     messages.add_message(request, messages.WARNING, 'Your comment was deleted')
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
-
-# TODO: Fix forms so it doesn't throw error if different user
-# TODO: Put celery task in own container
-# TODO: Docker containerize app
-# TODO: Write tests cover main functions including testing for backoff
+# TODO: Write tests cover main functions
 # TODO: Copy my notes Readme
