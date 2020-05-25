@@ -7,7 +7,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
   web:
     build: .
-    command: bash -c "pipenv run python /code/manage.py && pipenv run /code/manage.py loaddata init.json && pipenv run python /code/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "pipenv run python /code/manage.py migrate && pipenv run /code/manage.py loaddata init.json && pipenv run python /code/manage.py runserver 0.0.0.0:8000"
     working_dir: /code
     ports:
       - 8000:8000

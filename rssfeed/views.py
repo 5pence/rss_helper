@@ -136,4 +136,5 @@ def delete_comment(request, pk):
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
 # TODO: Write tests cover main functions
+# TODO: Containerise env and test on different machine
 # TODO: Copy my notes Readme

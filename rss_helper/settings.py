@@ -14,7 +14,11 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool, default=False)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
-
+#ALLOWED_HOSTS = [
+#    '0.0.0.0',
+#    '127.0.0.1',
+#    'localhost',
+#]
 
 # Application definition
 
@@ -68,22 +72,22 @@ WSGI_APPLICATION = 'rss_helper.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_ENV_DB', default='postgres'),
-        'USER': config('DB_ENV_POSTGRES_USER', default='postgres'),
-        'PASSWORD': config('DB_ENV_POSTGRES_PASSWORD', default='postgres'),
-        'HOST': config('DB_PORT_5432_TCP_ADDR', default='db'),
-        'PORT': config('DB_PORT_5432_TCP_PORT', ''),
-    },
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+   }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': config('DB_ENV_DB', default='postgres'),
+#         'USER': config('DB_ENV_POSTGRES_USER', default='postgres'),
+#         'PASSWORD': config('DB_ENV_POSTGRES_PASSWORD', default='postgres'),
+#         'HOST': config('DB_PORT_5432_TCP_ADDR', default='db'),
+#         'PORT': config('DB_PORT_5432_TCP_PORT', ''),
+#     },
+# }
 
 
 # Password validation

@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
-from rssfeed.models import Feed
+from rssfeed.models import Feed, FeedItem
 from feed.tasks import import_feed_task
 from django.utils import timezone
 
@@ -125,6 +125,70 @@ class FeedTest(TestCase):
         after_count = self.user.feed_set.all().count()
         # ensure no duplicates were made
         self.assertEqual(before_count, after_count)
+
+    # def test_add_bookmark(self):
+    #     feed = Feed.objects.create(
+    #         user=self.user,
+    #         title='random feed',
+    #         url='http://www.nu.nl/rss/Algemeen'
+    #     )
+
+    def test_unread_count(self):
+        """ Add a feed, a feed item and check the is_read counter is 1 then No unread items"""
+        # create a feed
+        feed = Feed.objects.create(
+            user=self.user,
+            title='random feed',
+            url='http://www.nu.nl/rss/Algemeen'
+        )
+        # add a feed item to feed
+        feeditem = FeedItem.objects.create(
+            feed=feed,
+            title='great feed item',
+            text='some text about great feed item',
+            url='https://google.com'
+        )
+        # goto my_feeds page
+        url = reverse('my_feeds')
+        response = self.client.get(url)
+        # make sure Unread items:1 is on page
+        self.assertContains(response, 'Unread items')
+        self.assertContains(response, '<mark>1</mark>')
+        # now visit that feed item
+        url = reverse('feed_item', kwargs={'pk': feeditem.id})
+        response = self.client.get(url)
+        # ensure the text of the feed item is present
+        self.assertContains(response, 'great feed item')
+        # go back to my_feeds
+        url = reverse('my_feeds')
+        # Ensure that 'No unread items' is on page
+        response = self.client.get(url)
+        self.assertContains(response, 'No unread items')
+
+    def test_remove_feed(self):
+        feed = Feed.objects.create(
+            user=self.user,
+            title='random feed',
+            url='http://www.nu.nl/rss/Algemeen'
+        )
+        url = reverse('my_feeds')
+        response = self.client.get(url)
+        self.assertContains(response, 'random feed')
+        url = reverse('remove_feed', kwargs={'pk': feed.id})
+
+    # def test_add_comment(self):
+    #     feed = Feed.objects.create(
+    #         user=self.user,
+    #         title='random feed',
+    #         url='http://www.nu.nl/rss/Algemeen'
+    #     )
+
+    def test_remove_comment(self):
+        feed = Feed.objects.create(
+            user=self.user,
+            title='random feed',
+            url='http://www.nu.nl/rss/Algemeen'
+        )
 
     def test_feed_import_fail_backoff(self):
         """ Test exponential backoff algorithm by using a bad feed url
