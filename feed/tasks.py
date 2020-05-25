@@ -1,4 +1,5 @@
-from __future__ import absolute_import, unicode_literals
+import logging
+
 from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
@@ -6,10 +7,12 @@ from celery import shared_task
 from rssfeed.models import Feed
 from feed.utils import import_items, ImportFailed
 
+logger = logging.getLogger(__name__)
+
 
 @shared_task
 def import_feed_task(feed_id: int):
-    print('fetching id', feed_id)
+    logger.info('fetching id %d' % feed_id)
     feed = Feed.objects.get(pk=feed_id)
     try:
         import_items(feed)

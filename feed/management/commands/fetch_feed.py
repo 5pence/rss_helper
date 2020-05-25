@@ -1,6 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from feed.tasks import import_feed_task
-from account.models import Feed
+from rssfeed.models import Feed
 
 
 class Command(BaseCommand):
@@ -12,6 +12,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         feed = Feed.objects.get(pk=options['id'])
-        print(feed.url)
-        print(import_feed_task.delay(feed.id))
-        print('done')
+        import_feed_task.delay(feed.id)

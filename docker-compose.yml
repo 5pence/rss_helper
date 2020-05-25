@@ -14,6 +14,12 @@ services:
     container_name: rss_reader_web
     depends_on:
       - db
+    environment:
+      # I wouldn't normally do this, though as this is a demo and for ease of you running I have
+      - SECRET_KEY=u+g52ui@6kg4b#$r^v&z_u5-12yya)-^zj%gtcr4e$t-5&@s+%
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+      - CELERY_BROKER_URL=redis://rd01:6379/0
 
   celery:
     build: .
@@ -22,6 +28,7 @@ services:
     depends_on:
       - db
       - redis
+      - web
 
   celery_beat:
     build: .
@@ -30,6 +37,7 @@ services:
     depends_on:
       - db
       - redis
+      - web
 
   redis:
     image: redis:latest
