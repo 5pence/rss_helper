@@ -3,10 +3,9 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
+from django.urls import reverse
 from .forms import CommentForm, AddFeedForm
 from .models import Feed, FeedItem, Comment
-from django.urls import reverse
 
 
 def welcome(request):
@@ -134,7 +133,3 @@ def delete_comment(request, pk):
     comment.delete()
     messages.add_message(request, messages.WARNING, 'Your comment was deleted')
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
-
-# TODO: Write tests cover 2 user main functions
-# TODO: Container fix for admin css - staticfiles
-# TODO: Copy my notes Readme

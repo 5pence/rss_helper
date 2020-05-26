@@ -1,10 +1,10 @@
-from datetime import timedelta
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 from rssfeed.models import Feed, FeedItem, Comment
 from feed.tasks import import_feed_task
-from django.utils import timezone
+from datetime import timedelta
 
 
 class FeedTest(TestCase):
@@ -23,7 +23,9 @@ class FeedTest(TestCase):
         self.client.login(username=self.user.username, password=password)
 
     def test_add_feed_success(self):
-        """ Add a feed and ensure the added feed message is displayed on page """
+        """ Add a feed and ensure the added feed message is displayed on page and also ensures that user2 does not
+        see it
+        """
         url = reverse('add_feed')
         # Get the count of feeds
         before_count = self.user.feed_set.all().count()
@@ -43,6 +45,22 @@ class FeedTest(TestCase):
         after_count = self.user.feed_set.all().count()
         # Assert we have an additional one
         self.assertEqual(after_count - before_count, 1)
+        # Create a second user
+        password = 'reallySecure'
+        self.user2 = User.objects.create(
+            username='test2@test.com',
+            password=password,
+            is_active=True
+        )
+        self.user2.set_password(password)
+        self.user2.save()
+        self.client = Client()
+        # login user2
+        self.client.login(username=self.user.username, password=password)
+        # Get the current count of feeds for user2
+        user2_count = self.user2.feed_set.all().count()
+        # Assert that user2 count is still zero
+        self.assertEqual(user2_count, 0)
 
     def test_add_feed_fail_no_auth(self):
         """ Check an unauthorised user cannot add a feed """
@@ -80,7 +98,6 @@ class FeedTest(TestCase):
         # Check the two error messages are returned on page
         self.assertContains(response, 'Invalid RSS Feed')
         # Check no feed was added
-
         self.assertEqual(before_count, self.user.feed_set.all().count())
 
     def test_add_feed_fail_duplicate_title(self):
@@ -109,7 +126,9 @@ class FeedTest(TestCase):
             url='http://www.nu.nl/rss/Algemeen'
         )
         url = reverse('update_feed', kwargs={'pk': feed.id})
+        # get current feed count
         before_count = self.user.feed_set.all().count()
+        # update feed with new title
         response = self.client.post(
             url,
             data={
@@ -119,8 +138,10 @@ class FeedTest(TestCase):
             follow=True
         )
         self.assertEqual(response.status_code, 200)
+        # check we get success message
         self.assertContains(response, "successfully updated your feed")
         self.assertContains(response, "another random feed")
+        # count feeds again
         after_count = self.user.feed_set.all().count()
         # ensure no duplicates were made
         self.assertEqual(before_count, after_count)
