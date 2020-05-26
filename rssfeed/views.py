@@ -42,9 +42,8 @@ def update_feed(request, pk):
             messages.success(request, "You've successfully updated your feed")
             return HttpResponseRedirect(reverse('my_feeds'))
 
-    return render(request, 'rssfeed/update_feed.html',
-                  {'form': form,
-                   'feed': feed})
+    return render(request, 'rssfeed/update_feed.html', {'form': form,
+                                                        'feed': feed})
 
 
 @login_required
