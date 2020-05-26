@@ -135,6 +135,6 @@ def delete_comment(request, pk):
     messages.add_message(request, messages.WARNING, 'Your comment was deleted')
     return HttpResponseRedirect(reverse('feed_item', kwargs={'pk': feed_item_id}))
 
-# TODO: Write tests cover main functions
-# TODO: Containerise env and test on different machine
+# TODO: Write tests cover 2 user main functions
+# TODO: Container fix for admin css - staticfiles
 # TODO: Copy my notes Readme
