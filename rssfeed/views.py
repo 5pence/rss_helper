@@ -102,9 +102,9 @@ def feed_item_detail(request, pk):
 
 
 @login_required
-def toggle_favourite_feed_item(request):
+def toggle_favourite_feed_item(request, pk):
     """ Toggles is_favourite on feed item """
-    feed_item = FeedItem.objects.get(id=request.GET.get('id'))
+    feed_item = FeedItem.objects.get(id=pk)
     feed_item.is_bookmarked = not feed_item.is_bookmarked
     feed_item.save()
     return render(request, 'rssfeed/feed_detail.html', {'feed_item': feed_item})

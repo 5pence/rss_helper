@@ -2,7 +2,7 @@ from datetime import timedelta
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
-from rssfeed.models import Feed, FeedItem
+from rssfeed.models import Feed, FeedItem, Comment
 from feed.tasks import import_feed_task
 from django.utils import timezone
 
@@ -85,10 +85,9 @@ class FeedTest(TestCase):
 
     def test_add_feed_fail_duplicate_title(self):
         """ Test adding a feed with a duplicate title string """
-        for i in range (0, 2):
+        response = ''
+        for i in range(0, 2):
             url = reverse('add_feed')
-            # Count all feeds
-            before_count = self.user.feed_set.all().count()
             # Post a feed with a bad url
             response = self.client.post(
                 url,
@@ -100,7 +99,7 @@ class FeedTest(TestCase):
         # Check the two error messages are returned on page
         self.assertContains(response, 'You already have that title in your feed, please choose another.')
         # Check no feed was added
-        self.assertEqual(before_count, self.user.feed_set.all().count())
+        self.assertEqual(self.user.feed_set.all().count(), 1)
 
     def test_update_feed(self):
         """ Test to update feed details """
@@ -126,12 +125,37 @@ class FeedTest(TestCase):
         # ensure no duplicates were made
         self.assertEqual(before_count, after_count)
 
-    # def test_add_bookmark(self):
-    #     feed = Feed.objects.create(
-    #         user=self.user,
-    #         title='random feed',
-    #         url='http://www.nu.nl/rss/Algemeen'
-    #     )
+    def test_add_bookmark(self):
+        """ Bookmark a feed item and ensure it shows on my favourites page """
+        # create a feed
+        feed = Feed.objects.create(
+            user=self.user,
+            title='random feed',
+            url='http://www.nu.nl/rss/Algemeen'
+        )
+        # add a feed item to feed, although the model presently defaults is_bookmarked to False set it anyway
+        feeditem = FeedItem.objects.create(
+            feed=feed,
+            title='great feed item',
+            text='some text about great feed item',
+            is_bookmarked=False,
+            url='https://google.com'
+        )
+        # goto my favourites page and ensure the feed item is not there
+        url = reverse('my_favourite_feeds')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'random feed')
+        # bookmark the feed item
+        url = reverse('toggle_bookmark', kwargs={'pk': feeditem.id})
+        self.client.get(url)
+        # goto my favourites page and ensure the feed item is there
+        url = reverse('my_favourite_feeds')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'random feed')
+        self.assertContains(response, 'Favourite items')
+        self.assertContains(response, '<mark>1</mark>')
 
     def test_unread_count(self):
         """ Add a feed, a feed item and check the is_read counter is 1 then No unread items"""
@@ -166,29 +190,60 @@ class FeedTest(TestCase):
         self.assertContains(response, 'No unread items')
 
     def test_remove_feed(self):
+        # create feed
         feed = Feed.objects.create(
             user=self.user,
             title='random feed',
             url='http://www.nu.nl/rss/Algemeen'
         )
+        # goto my_feeds page and ensure it is there
         url = reverse('my_feeds')
         response = self.client.get(url)
         self.assertContains(response, 'random feed')
+        # remove the feed
         url = reverse('remove_feed', kwargs={'pk': feed.id})
+        # goto my_feeds page and ensure we get the message and the feed is not there
+        response = self.client.get(
+            url,
+            follow=True
+        )
+        self.assertContains(response, 'Your feed was deleted')
+        self.assertNotContains(response, 'random feed')
 
-    # def test_add_comment(self):
-    #     feed = Feed.objects.create(
-    #         user=self.user,
-    #         title='random feed',
-    #         url='http://www.nu.nl/rss/Algemeen'
-    #     )
-
-    def test_remove_comment(self):
+    def test_add_and_remove_comment(self):
         feed = Feed.objects.create(
             user=self.user,
             title='random feed',
             url='http://www.nu.nl/rss/Algemeen'
         )
+        # add a feed item to feed, although the model presently defaults is_bookmarked to False set it anyway
+        feeditem = FeedItem.objects.create(
+            feed=feed,
+            title='great feed item',
+            text='some text about great feed item',
+            is_bookmarked=False,
+            url='https://google.com'
+        )
+        # add a comment to the feed item
+        comment = Comment.objects.create(
+            feed_item=feeditem,
+            text='a small comment'
+        )
+        # check the comment shows on page
+        url = reverse('feed_item', kwargs={'pk': feeditem.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'a small comment')
+        # now delete comment
+        url = reverse('delete_comment', kwargs={'pk': comment.id})
+        self.client.get(url)
+        # goto the feed item
+        url = reverse('feed_item', kwargs={'pk': feeditem.id})
+        response = self.client.get(url)
+        # ensure we get delete message and that the comment is no longer there
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Your comment was deleted')
+        self.assertNotContains(response, 'a small comment')
 
     def test_feed_import_fail_backoff(self):
         """ Test exponential backoff algorithm by using a bad feed url

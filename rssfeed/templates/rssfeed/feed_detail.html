@@ -7,10 +7,10 @@
         <p>
             {% if feed_item.is_bookmarked %}
                 <a class="btn btn-warning float-right"
-                   href="{% url 'toggle_bookmark' %}?id={{ feed_item.id }}">Remove this Bookmark</a>
+                   href="{% url 'toggle_bookmark' pk=feed_item.id %}">Remove this Bookmark</a>
             {% else %}
                 <a class="btn btn-success float-right"
-                   href="{% url 'toggle_bookmark' %}?id={{ feed_item.id }}">Bookmark this feed item</a>
+                   href="{% url 'toggle_bookmark' pk=feed_item.id  %}">Bookmark this feed item</a>
             {% endif %}
         </p>
         <h2>{{ feed_item.title }}</h2>
