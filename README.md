@@ -48,7 +48,7 @@
  3. run `docker-compose build`
  4. run `docker-compose up`
  
- After these processes you can visit the site at 0.0.0.0:8000 and register and login and start using the site.    
+ After these processes you can visit the site at localhost:8000 and register and login and start using the site.    
  
  I have tested this on 4 separate machines so do not envisage any problems, if you do have any issues then please
  contact me.
