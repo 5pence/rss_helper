@@ -294,9 +294,17 @@ class FeedTest(TestCase):
                 next_run_datetime,
                 delta=timezone.timedelta(seconds=1)
             )
-        # Now get the content of my feeds page
+        # now get the content of my feeds page
         response = self.client.get('/rssfeed/my_feeds/')
-        # As the feed has failed over 10 times assert failed message is on page
+        # as the feed has failed over 10 times assert failed message is on page
         self.assertContains(response, 'Sorry, this feed has failed many times')
-        # And that the button labelled 'Restart Feed' is present
+        # and that the button labelled 'Restart Feed' is present
         self.assertContains(response, 'Restart Feed')
+        # now we restart feed
+        url = reverse('reset_fail_count', kwargs={'pk': feed.id})
+        response = self.client.get(url, follow=True)
+        feed.refresh_from_db()
+        # ensure that fail count is set back to zero
+        self.assertEqual(feed.fail_count, 0)
+        # and that 'Restart Feed' does not appear on page
+        self.assertNotContains(response, 'Restart Feed')
