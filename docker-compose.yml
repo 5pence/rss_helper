@@ -1,16 +1,28 @@
 version: '3.6'
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./static:/static
+    depends_on:
+      - web
   db:
     image: mdillon/postgis
     volumes:
       - postgres_data:/var/lib/postgresql/data/
   web:
     build: .
-    command: bash -c "pipenv run python /code/manage.py migrate && pipenv run /code/manage.py loaddata init.json && pipenv run python /code/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "/code/start.sh"
     working_dir: /code
+    volumes:
+      - ./static:/code/static
     ports:
-      - 8000:8000
+      - 8001:8001
     container_name: rss_reader_web
     depends_on:
       - db
